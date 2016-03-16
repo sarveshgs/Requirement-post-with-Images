@@ -1,9 +1,8 @@
 var app = angular.module('postApp',['ui.select2','ngFileUpload']);
 //client side controller to handle user problem submission
 app.controller('problemController' ,['$scope', 'Upload', '$timeout','$http','$window', function($scope, Upload, $timeout,$http,$window){
-	
-	console.log('Running');
-    $scope.imagefileslist = [];
+	var successfiles =[]; //files successfully inserted
+	$scope.imagefileslist = []; //files used to display on front end
 	 //code to handle tags
 	 $scope.select2Options = {
         'multiple': true,
@@ -34,12 +33,10 @@ app.controller('problemController' ,['$scope', 'Upload', '$timeout','$http','$wi
                       file: file  
                     }
                 }).then(function (resp) {
-                    $timeout(function() {
-                        $scope.log = 'file: ' +
-                        resp.config.data.file.name +
-                        ', Response: ' + JSON.stringify(resp.data) +
-                        '\n' + $scope.log;
-                    });
+                    console.log('response is '+resp.data);
+                    if(resp.data.isDMLSuccessful){
+                        successfiles.push(resp.data.data);
+                    }
                 }, null, function (evt) {
                     var progressPercentage = parseInt(100.0 *
                             evt.loaded / evt.total);
@@ -64,9 +61,15 @@ app.controller('problemController' ,['$scope', 'Upload', '$timeout','$http','$wi
             'description': $scope.post.description,
 			'quantity': $scope.post.quantity,
 			'tags':  $scope.post.tags,
-			'email':'abc@gmail.com'
+			'email':'abc@gmail.com',
+            'images':successfiles
 		};
-		var data2 = $scope.post;
+		 $scope.post.title ="";
+         $scope.post.description="";
+         $scope.post.quantity ="";
+         $scope.post.tags=[];
+         successfiles =[];
+
 		console.log(Data);
 
        //http method description

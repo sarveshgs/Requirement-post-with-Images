@@ -12,9 +12,10 @@ exports.uploadImage = function(req,res){
                     var Grid = require('gridfs-stream');
                     var fs = require('fs');
                     var MongoClient = mongo.MongoClient,
-                       server = mongo.Server;
+                    		server = mongo.Server;
                     var mongoclient = new MongoClient(new server('localhost', 27017));
-                    mongoclient.connect('mongodb://localhost:27017/mydb', function(err, db) {
+                    mongoclient.connect('mongodb://localhost:27017/dojugaad', function(err, db) {
+                        console.log(file);
                         db.open(function(err) {
                             if (err) return handleError(err);
                             var gfs = Grid(db, mongo);
@@ -26,6 +27,12 @@ exports.uploadImage = function(req,res){
 
                             });
                             fs.createReadStream(path).pipe(writestream);
+                            result = {
+                        		isDMLSuccessful: true,
+                        		data: file.originalFilename,
+                        		message: 'Image inserted successfully'
+                    		}
+                            res.send(result);
                         });
                     });
                 });
